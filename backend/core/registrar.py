@@ -13,6 +13,7 @@ from fastapi import FastAPI
 
 from backend.common.log import setup_logging, set_customize_logfile
 from backend.core.conf import settings
+from backend.core.path_conf import STATIC_DIR
 from backend.utils.serializers import MsgSpecJSONResponse
 
 
@@ -38,6 +39,12 @@ def register_app():
     # 全局日志注册
     register_logger()
 
+    # 静态文件
+    register_static_file(app)
+
+    # 中间件
+    register_middleware(app)
+
     return app
 
 
@@ -48,3 +55,37 @@ def register_logger() -> None:
     """
     setup_logging()
     set_customize_logfile()
+
+
+def register_static_file(app: FastAPI):
+    """
+    静态文件交互开发模式, 生产将自动关闭，生产必须使用 nginx 静态资源服务
+
+    :param app:
+    :return:
+    """
+    if settings.FASTAPI_STATIC_FILES:
+        from fastapi.staticfiles import StaticFiles
+
+        app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
+
+
+def register_middleware(app: FastAPI):
+    """
+    中间件，执行顺序从下往上
+
+    :param app:
+    :return:
+    """
+    # CORS: Always at the end
+    if settings.MIDDLEWARE_CORS:
+        from fastapi.middleware.cors import CORSMiddleware
+
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.CORS_ALLOWED_ORIGINS,
+            allow_credentials=True,
+            allow_methods=['*'],
+            allow_headers=['*'],
+            expose_headers=settings.CORS_EXPOSE_HEADERS,
+        )
