@@ -8,3 +8,9 @@
 
 # 修订记录
 1. 初次版本修订： start 2024-12    end ?
+
+# 项目构建
+## 项目依赖
+每次更新完项目后生成依赖`pip freeze > requirements.txt`
+
+继续开发之前安装依赖`pip install -r requirements.txt`
