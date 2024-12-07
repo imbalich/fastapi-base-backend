@@ -11,6 +11,7 @@ import socketio
 
 from fastapi import FastAPI
 
+from backend.common.log import setup_logging, set_customize_logfile
 from backend.core.conf import settings
 from backend.utils.serializers import MsgSpecJSONResponse
 
@@ -34,4 +35,16 @@ def register_app():
     # TODO:后续增加socketio服务
     # register_socket_app(app)
 
+    # 全局日志注册
+    register_logger()
+
     return app
+
+
+def register_logger() -> None:
+    """
+    系统日志注册
+    :return:
+    """
+    setup_logging()
+    set_customize_logfile()
