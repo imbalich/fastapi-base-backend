@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+'''
+@Project ：fastapi-base-backend
+@File    ：conf.py
+@IDE     ：PyCharm
+@Author  ：imbalich
+@Date    ：2024/12/7 16:22
+'''
 import os
 
 from pathlib import Path
