@@ -77,7 +77,12 @@ def register_middleware(app: FastAPI):
     :param app:
     :return:
     """
-    # CORS: Always at the end
+    # Access log: 请求日志中间件
+    if settings.MIDDLEWARE_ACCESS:
+        from backend.middleware.access_middleware import AccessMiddleware
+        app.add_middleware(AccessMiddleware)
+
+    # CORS: 必须放在最后
     if settings.MIDDLEWARE_CORS:
         from fastapi.middleware.cors import CORSMiddleware
 
