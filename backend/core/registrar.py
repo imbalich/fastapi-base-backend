@@ -7,14 +7,44 @@
 @Author  ：imbalich
 @Date    ：2024/12/7 16:47 
 '''
+from contextlib import asynccontextmanager
+
 import socketio
 
 from fastapi import FastAPI
+from fastapi_limiter import FastAPILimiter
 
 from backend.common.log import setup_logging, set_customize_logfile
 from backend.core.conf import settings
 from backend.core.path_conf import STATIC_DIR
+from backend.database.db_mysql import create_table
+from backend.database.db_redis import redis_client
+from backend.utils.health_check import http_limit_callback
 from backend.utils.serializers import MsgSpecJSONResponse
+
+
+@asynccontextmanager
+async def register_init(app: FastAPI):
+    """
+    启动初始化
+
+    :return:
+    """
+    # 创建数据库表
+    await create_table()
+    # 连接 redis
+    await redis_client.open()
+    # 初始化 limiter
+    await FastAPILimiter.init(
+        redis=redis_client, prefix=settings.REQUEST_LIMITER_REDIS_PREFIX, http_callback=http_limit_callback
+    )
+
+    yield
+
+    # 关闭 redis 连接
+    await redis_client.close()
+    # 关闭 limiter
+    await FastAPILimiter.close()
 
 
 def register_app():
@@ -29,8 +59,7 @@ def register_app():
         redoc_url=settings.FASTAPI_REDOCS_URL,
         openapi_url=settings.FASTAPI_OPENAPI_URL,
         default_response_class=MsgSpecJSONResponse,
-        # TODO:后续完善生命周期检查方法
-        # lifespan=register_init,
+        lifespan=register_init,
     )
 
     # TODO:后续增加socketio服务
