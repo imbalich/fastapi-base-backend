@@ -97,7 +97,7 @@ class OperaLogCipherType(IntEnum):
     aes = 0
     md5 = 1
     itsdangerous = 2
-    plan = 3  # 可能是 'plain' 的拼写错误
+    plan = 3
 
 
 # 状态类型枚举
