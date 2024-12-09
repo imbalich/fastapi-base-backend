@@ -19,6 +19,7 @@ from backend.core.conf import settings
 from backend.core.path_conf import STATIC_DIR
 from backend.database.db_mysql import create_table
 from backend.database.db_redis import redis_client
+from backend.middleware.state_middleware import StateMiddleware
 from backend.utils.health_check import http_limit_callback
 from backend.utils.serializers import MsgSpecJSONResponse
 
@@ -110,6 +111,9 @@ def register_middleware(app: FastAPI):
     if settings.MIDDLEWARE_ACCESS:
         from backend.middleware.access_middleware import AccessMiddleware
         app.add_middleware(AccessMiddleware)
+
+    # State
+    app.add_middleware(StateMiddleware)
 
     # CORS: 必须放在最后
     if settings.MIDDLEWARE_CORS:
