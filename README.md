@@ -1,5 +1,5 @@
 # fastapi-base-backend
-借鉴（抄袭）自FBA项目，用于构建个人未来开发的通用后台模板工程，基于FBA的基础上进行自定义的改进。
+借鉴（抄袭）自[FBA](https://github.com/fastapi-practices/fastapi_best_architecture)项目，用于构建个人未来开发的通用后台模板工程，基于FBA的基础上进行自定义的改进。
 
 # 修改原则
 该版本主要修改为了作为小范围/小团队使用的内部工具平台服务，故做出如下限制：
