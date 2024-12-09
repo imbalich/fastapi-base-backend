@@ -10,6 +10,7 @@
 from contextlib import asynccontextmanager
 
 import socketio
+from asgi_correlation_id import CorrelationIdMiddleware
 
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
@@ -114,6 +115,9 @@ def register_middleware(app: FastAPI):
 
     # State
     app.add_middleware(StateMiddleware)
+
+    # Trace ID (required)
+    app.add_middleware(CorrelationIdMiddleware, validator=False)
 
     # CORS: 必须放在最后
     if settings.MIDDLEWARE_CORS:
