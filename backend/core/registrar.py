@@ -14,6 +14,7 @@ from asgi_correlation_id import CorrelationIdMiddleware
 
 from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
+from starlette.middleware.authentication import AuthenticationMiddleware
 
 from backend.common.log import setup_logging, set_customize_logfile
 from backend.core.conf import settings
@@ -108,6 +109,11 @@ def register_middleware(app: FastAPI):
     :param app:
     :return:
     """
+    # JWT auth (required)
+    app.add_middleware(
+        AuthenticationMiddleware, backend=JwtAuthMiddleware(), on_error=JwtAuthMiddleware.auth_exception_handler
+    )
+
     # Access log: 请求日志中间件
     if settings.MIDDLEWARE_ACCESS:
         from backend.middleware.access_middleware import AccessMiddleware
