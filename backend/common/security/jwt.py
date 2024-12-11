@@ -17,10 +17,14 @@ from passlib.context import CryptContext
 from pydantic_core import from_json
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.app.admin.model import User
+from backend.app.admin.schema.user import CurrentUserIns
 from backend.common.dataclasses import RefreshToken, AccessToken, NewToken
-from backend.common.exception.errors import TokenError
+from backend.common.exception.errors import TokenError, AuthorizationError
 from backend.core.conf import settings
+from backend.database.db_mysql import async_db_session
 from backend.database.db_redis import redis_client
+from backend.utils.serializers import select_as_dict
 from backend.utils.timezone import timezone
 
 # JWT authorizes dependency injection
@@ -32,7 +36,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_hash_password(password: str) -> str:
     """
-    使用 bcrypt 算法加密密码
+    使用 bcrypt 算法加密密码，不手动设置加盐，采用默认
 
     :param password: 原始密码
     :return: 加密后的密码
@@ -241,4 +245,43 @@ async def get_current_user(db: AsyncSession, pk: int) -> User:
         if all(status == 0 for status in role_status):
             raise AuthorizationError(msg='用户所属角色已被锁定，请联系系统管理员')
 
+    return user
+
+
+def superuser_verify(request: Request) -> bool:
+    """
+    验证当前用户权限通过令牌
+    """
+    superuser = request.user.is_superuser
+    if not superuser or not request.user.is_staff:
+        raise AuthorizationError
+    return superuser
+
+
+async def jwt_authentication(token: str) -> CurrentUserIns:
+    """
+    JWT authentication
+
+    :param token:
+    :return:
+    """
+    user_id = jwt_decode(token)
+    key = f'{settings.TOKEN_REDIS_PREFIX}:{user_id}:{token}'
+    token_verify = await redis_client.get(key)
+    if not token_verify:
+        raise TokenError(msg='Token 已过期')
+    cache_user = await redis_client.get(f'{settings.JWT_USER_REDIS_PREFIX}:{user_id}')
+    if not cache_user:
+        async with async_db_session() as db:
+            current_user = await get_current_user(db, user_id)
+            user = CurrentUserIns(**select_as_dict(current_user))
+            await redis_client.setex(
+                f'{settings.JWT_USER_REDIS_PREFIX}:{user_id}',
+                settings.JWT_USER_REDIS_EXPIRE_SECONDS,
+                user.model_dump_json(),
+            )
+    else:
+        # TODO: 在恰当的时机，应替换为使用 model_validate_json
+        # https://docs.pydantic.dev/latest/concepts/json/#partial-json-parsing
+        user = CurrentUserIns.model_validate(from_json(cache_user, allow_partial=True))
     return user
