@@ -38,12 +38,13 @@ class StrEnum(_EnumBase, str, Enum):
     pass
 
 
-# 菜单类型枚举
-class MenuType(IntEnum):
-    """菜单类型"""
+# 权限类型枚举
+class PermissionType(IntEnum):
+    """权限类型"""
     directory = 0  # 目录
     menu = 1  # 菜单
-    button = 2  # 按钮
+    button = 2  # 功能按钮
+    backend_api = 9  # 后端接口
 
 
 # 数据权限规则运算符枚举
