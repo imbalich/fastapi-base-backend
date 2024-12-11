@@ -41,11 +41,18 @@ class RegisterUserParamWithoutEmail(AuthSchemaBase):
     email: EmailStr | None = Field(examples=['user@example.com'])
 
 
+class AddUserParam(AuthSchemaBase):
+    dept_id: int
+    roles: list[int]
+    nickname: str | None = None
+    email: EmailStr | None = Field(examples=['user@example.com'])
+
+
 class UserInfoSchemaBase(SchemaBase):
     dept_id: int | None = None
     username: str
     nickname: str
-    email: EmailStr = Field(examples=['user@example.com'])
+    email: EmailStr | None = Field(examples=['user@example.com'])
     phone: CustomPhoneNumber | None = None
 
 
