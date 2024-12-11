@@ -8,3 +8,6 @@
 @Date    ：2024/12/9 15:57 
 '''
 from backend.app.admin.model.user import User
+from backend.app.admin.model.role import Role
+from backend.app.admin.model.permission import Permission
+from backend.app.admin.model.dept import Dept
