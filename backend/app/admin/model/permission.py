@@ -24,7 +24,7 @@ class Permission(Base):
     id: Mapped[id_key] = mapped_column(init=False)
     title: Mapped[str] = mapped_column(String(50), comment='菜单标题')
     name: Mapped[str] = mapped_column(String(50), comment='权限名称')
-    type: Mapped[str] = mapped_column(String(1), comment='权限类型（M目录 C菜单 F功能 A接口）')
+    type: Mapped[str] = mapped_column(default=0, comment='权限类型（0目录 1菜单 2功能按钮 9后端接口）')
     code: Mapped[str] = mapped_column(String(100), unique=True, comment='权限代码')
     icon: Mapped[str | None] = mapped_column(String(100), default=None, comment='菜单图标')
     path: Mapped[str | None] = mapped_column(String(200), comment='路由地址')
