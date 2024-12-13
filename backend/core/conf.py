@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     FASTAPI_API_V1_PATH: str = '/api/v1'
     FASTAPI_TITLE: str = 'FastAPI'
     FASTAPI_VERSION: str = '0.0.1'
-    FASTAPI_DESCRIPTION: str = 'FastAPI Base Backend'
+    FASTAPI_DESCRIPTION: str = 'FastAPI Base Backend: 一个基于 FastAPI 的后端服务开发的基础后台框架'
     FASTAPI_DOCS_URL: str | None = f'{FASTAPI_API_V1_PATH}/docs'
     FASTAPI_REDOCS_URL: str | None = f'{FASTAPI_API_V1_PATH}/redocs'
     FASTAPI_OPENAPI_URL: str | None = f'{FASTAPI_API_V1_PATH}/openapi'
