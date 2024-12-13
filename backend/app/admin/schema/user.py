@@ -12,6 +12,8 @@ from datetime import datetime
 from pydantic import ConfigDict, EmailStr, Field, HttpUrl, model_validator
 from typing_extensions import Self
 
+from backend.app.admin.schema.dept import GetDeptListDetails
+from backend.app.admin.schema.role import GetRoleListDetails
 from backend.common.enums import StatusType
 from backend.common.schema import SchemaBase, CustomPhoneNumber
 
@@ -27,18 +29,10 @@ class AuthLoginParam(AuthSchemaBase):
 
 class RegisterUserParam(AuthSchemaBase):
     """
-    注册用户:需要填写邮箱地址
+    注册用户:需要填写邮箱地址,用户注册暂时不开放给用户，仅内部通过管理员给用户注册账号
     """
     nickname: str | None = None
     email: EmailStr = Field(examples=['user@example.com'])
-
-
-class RegisterUserParamWithoutEmail(AuthSchemaBase):
-    """
-    注册用户:邮箱地址选填
-    """
-    nickname: str | None = None
-    email: EmailStr | None = Field(examples=['user@example.com'])
 
 
 class AddUserParam(AuthSchemaBase):
@@ -84,20 +78,30 @@ class GetUserInfoNoRelationDetail(UserInfoSchemaBase):
 
 
 class GetUserInfoListDetails(GetUserInfoNoRelationDetail):
-    """
-    获取用户列表详细信息
-    """
-    # TODO:后续补充关联关系
     model_config = ConfigDict(from_attributes=True)
+
+    dept: GetDeptListDetails | None = None
+    # TODO:GetRoleListDetails尚未完善数据规则部分
+    roles: list[GetRoleListDetails]
 
 
 class GetCurrentUserInfoDetail(GetUserInfoListDetails):
-    """
-    获取当前用户详细信息
-    """
     model_config = ConfigDict(from_attributes=True)
 
-    # TODO:后续补充关联关系
+    dept: GetDeptListDetails | str | None = None
+    # TODO:GetRoleListDetails尚未完善数据规则部分
+    roles: list[GetRoleListDetails] | list[str] | None = None
+
+    @model_validator(mode='after')
+    def handel(self) -> Self:
+        """处理部门和角色"""
+        dept = self.dept
+        if dept:
+            self.dept = dept.name  # type: ignore
+        roles = self.roles
+        if roles:
+            self.roles = [role.name for role in roles]  # type: ignore
+        return self
 
 
 class CurrentUserIns(GetUserInfoListDetails):

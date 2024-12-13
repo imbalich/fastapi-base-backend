@@ -9,5 +9,5 @@
 '''
 from backend.app.admin.model.user import User
 from backend.app.admin.model.role import Role
-from backend.app.admin.model.permission import Permission
+from backend.app.admin.model.menu import Menu
 from backend.app.admin.model.dept import Dept

@@ -39,12 +39,12 @@ class StrEnum(_EnumBase, str, Enum):
 
 
 # 权限类型枚举
-class PermissionType(IntEnum):
+class MenuType(IntEnum):
     """权限类型"""
     directory = 0  # 目录
     menu = 1      # 菜单
     button = 2    # 按钮
-    api = 9       # API接口
+    api = 9       # API接口:未来预留，暂未使用
 
 
 # 数据权限规则运算符枚举
