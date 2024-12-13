@@ -12,10 +12,12 @@ from contextlib import asynccontextmanager
 import socketio
 from asgi_correlation_id import CorrelationIdMiddleware
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi_limiter import FastAPILimiter
 from starlette.middleware.authentication import AuthenticationMiddleware
 
+from backend.app.router import route
+from backend.common.exception.exception_handler import register_exception
 from backend.common.log import setup_logging, set_customize_logfile
 from backend.core.conf import settings
 from backend.core.path_conf import STATIC_DIR
@@ -23,7 +25,9 @@ from backend.database.db_mysql import create_table
 from backend.database.db_redis import redis_client
 from backend.middleware.jwt_auth_middleware import JwtAuthMiddleware
 from backend.middleware.state_middleware import StateMiddleware
-from backend.utils.health_check import http_limit_callback
+from backend.utils.demo_site import demo_site
+from backend.utils.health_check import http_limit_callback, ensure_unique_route_names
+from backend.utils.openapi import simplify_operation_ids
 from backend.utils.serializers import MsgSpecJSONResponse
 
 
@@ -77,6 +81,12 @@ def register_app():
 
     # 中间件
     register_middleware(app)
+
+    # 路由
+    register_router(app)
+
+    # 全局异常处理
+    register_exception(app)
 
     return app
 
@@ -138,3 +148,20 @@ def register_middleware(app: FastAPI):
             allow_headers=['*'],
             expose_headers=settings.CORS_EXPOSE_HEADERS,
         )
+
+
+def register_router(app: FastAPI):
+    """
+    路由
+
+    :param app: FastAPI
+    :return:
+    """
+    dependencies = [Depends(demo_site)] if settings.DEMO_MODE else None
+
+    # API
+    app.include_router(route, dependencies=dependencies)
+
+    # Extra
+    ensure_unique_route_names(app)
+    simplify_operation_ids(app)
