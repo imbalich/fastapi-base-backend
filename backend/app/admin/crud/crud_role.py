@@ -105,12 +105,11 @@ class CRUDRole(CRUDPlus[Role]):
         current_role.menus = menus.scalars().all()
         return len(current_role.menus)
 
-    async def delete(self, db) -> int:
+    async def delete(self, db, role_id: list[int]) -> int:
         """
         删除角色
         """
-        # TODO:暂时去除数据规则部分
-        return await self.delete_model_by_column(db, allow_multiple=True)
+        return await self.delete_model_by_column(db, allow_multiple=True, id__in=role_id)
 
 
 role_dao: CRUDRole = CRUDRole(Role)
