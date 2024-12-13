@@ -16,18 +16,16 @@ from backend.common.model import Base, id_key
 
 
 class Dept(Base):
-    """
-    部门表
-    """
+    """部门表"""
     __tablename__ = "sys_dept"
 
     id: Mapped[id_key] = mapped_column(init=False)
     name: Mapped[str] = mapped_column(String(50), unique=True, comment='部门名称')
-    level: Mapped[int] = mapped_column(default=0, comment='部门层级')
-    sort: Mapped[int] = mapped_column(default=0, comment='排序')
     leader: Mapped[str | None] = mapped_column(String(20), comment='负责人')
     phone: Mapped[str | None] = mapped_column(String(11), comment='联系电话')
     email: Mapped[str | None] = mapped_column(String(50), comment='邮箱')
+    level: Mapped[int] = mapped_column(default=0, comment='部门层级')
+    sort: Mapped[int] = mapped_column(default=0, comment='排序')
     status: Mapped[int] = mapped_column(default=1, comment='部门状态（0停用 1正常）')
     del_flag: Mapped[bool] = mapped_column(default=False, comment='删除标志（0删除 1存在）')
 
