@@ -32,7 +32,7 @@ class CRUDMenu(CRUDPlus[Menu]):
 
     async def get_all(self, db, title: str | None = None, status: int | None = None) -> Sequence[Menu]:
         """
-        获取所有菜单
+        获取所有菜单:根据排序获取所有菜单
         """
         filters = {}
         if title is not None:
