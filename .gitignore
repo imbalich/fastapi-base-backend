@@ -47,5 +47,5 @@ wheels/
 .installed.cfg
 *.egg
 
-*~/backend/alembic/versions/
+backend/alembic/versions/
 
