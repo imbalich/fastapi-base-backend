@@ -22,6 +22,7 @@ from backend.app.admin.schema.user import AuthLoginParam
 from backend.app.admin.service.login_log_service import login_log_service
 from backend.common.enums import LoginLogStatusType
 from backend.common.exception import errors
+from backend.common.log import log
 from backend.common.response.response_code import CustomErrorCode
 from backend.common.security.jwt import (
     create_access_token,
@@ -32,7 +33,7 @@ from backend.common.security.jwt import (
     password_verify,
 )
 from backend.core.conf import settings
-from backend.database.db_mysql import async_db_session
+from backend.database.db_mysql import async_db_session, uuid4_str
 from backend.database.db_redis import redis_client
 from backend.utils.timezone import timezone
 
@@ -70,45 +71,33 @@ class AuthService:
             return a_token.access_token, user
 
     async def login(
-            self, *, request: Request, response: Response, obj: AuthLoginParam, background_tasks: BackgroundTasks
+        self, *, request: Request, response: Response, obj: AuthLoginParam, background_tasks: BackgroundTasks
     ) -> GetLoginToken:
-        """
-        用户登录
-        :param request: 请求对象
-        :param response: 响应对象
-        :param obj: 登录参数
-        :param background_tasks: 后台任务
-        :return: 登录令牌
-        """
         async with async_db_session.begin() as db:
+            user = None
             try:
-                # 验证用户
                 user = await self.user_verify(db, obj.username, obj.password)
-                user_id = user.id
-                user_uuid = user.uuid
-                username = user.username
-
-                # 验证验证码
                 captcha_code = await redis_client.get(f'{admin_settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{request.state.ip}')
                 if not captcha_code:
                     raise errors.AuthorizationError(msg='验证码失效，请重新获取')
                 if captcha_code.lower() != obj.captcha.lower():
                     raise errors.CustomError(error=CustomErrorCode.CAPTCHA_ERROR)
-
-                # 创建访问令牌和刷新令牌
+                user_id = user.id
                 a_token = await create_access_token(str(user_id), user.is_multi_login)
                 r_token = await create_refresh_token(str(user_id), user.is_multi_login)
             except errors.NotFoundError as e:
+                log.error('登陆错误: 用户名不存在')
                 raise errors.NotFoundError(msg=e.msg)
             except (errors.AuthorizationError, errors.CustomError) as e:
-                # 记录登录失败日志
+                if not user:
+                    log.error('登陆错误: 用户密码有误')
                 task = BackgroundTask(
                     login_log_service.create,
                     **dict(
                         db=db,
                         request=request,
-                        user_uuid=user_uuid,
-                        username=username,
+                        user_uuid=user.uuid if user else uuid4_str(),
+                        username=obj.username,
                         login_time=timezone.now(),
                         status=LoginLogStatusType.fail.value,
                         msg=e.msg,
@@ -116,26 +105,23 @@ class AuthService:
                 )
                 raise errors.AuthorizationError(msg=e.msg, background=task)
             except Exception as e:
+                log.error(f'登陆错误: {e}')
                 raise e
             else:
-                # 登录成功，记录日志
                 background_tasks.add_task(
                     login_log_service.create,
                     **dict(
                         db=db,
                         request=request,
-                        user_uuid=user_uuid,
-                        username=username,
+                        user_uuid=user.uuid,
+                        username=obj.username,
                         login_time=timezone.now(),
                         status=LoginLogStatusType.success.value,
                         msg='登录成功',
                     ),
                 )
-                # 删除验证码
                 await redis_client.delete(f'{admin_settings.CAPTCHA_LOGIN_REDIS_PREFIX}:{request.state.ip}')
-                # 更新用户登录时间
                 await user_dao.update_login_time(db, obj.username)
-                # 设置刷新令牌 cookie
                 response.set_cookie(
                     key=settings.COOKIE_REFRESH_TOKEN_KEY,
                     value=r_token.refresh_token,
@@ -144,7 +130,6 @@ class AuthService:
                     httponly=True,
                 )
                 await db.refresh(user)
-                # 返回登录令牌
                 data = GetLoginToken(
                     access_token=a_token.access_token,
                     access_token_expire_time=a_token.access_token_expire_time,
