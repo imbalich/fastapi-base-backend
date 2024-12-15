@@ -21,3 +21,4 @@
 ## 环境配置
 1. 请复制环境变量文件，并将其中关键字段更改，尤其是token部分请重新生成并保密
 2. `backend/core/conf.py`中的配置请按需更改
+3. 在`backend/scripts/init_data.py`初始化数据脚本处xx行修改数据，启动`backend/pre_start.sh`脚本初始化迁移和插入初始数据
