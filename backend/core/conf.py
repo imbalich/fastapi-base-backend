@@ -121,8 +121,8 @@ class Settings(BaseSettings):
     LOG_CID_UUID_LENGTH: int = 32  # must <= 32
     LOG_STDOUT_LEVEL: str = 'INFO'
     LOG_STDERR_LEVEL: str = 'ERROR'
-    LOG_STDOUT_FILENAME: str = 'fba_access.log'
-    LOG_STDERR_FILENAME: str = 'fba_error.log'
+    LOG_STDOUT_FILENAME: str = 'fbb_access.log'
+    LOG_STDERR_FILENAME: str = 'fbb_error.log'
 
     # Middleware
     MIDDLEWARE_CORS: bool = True
