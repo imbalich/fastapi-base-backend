@@ -11,6 +11,7 @@ from datetime import datetime
 
 from pydantic import ConfigDict, Field
 
+from backend.app.admin.schema.data_rule import GetDataRuleListDetails
 from backend.app.admin.schema.menu import GetMenuListDetails
 from backend.common.enums import StatusType
 from backend.common.schema import SchemaBase
@@ -34,6 +35,10 @@ class UpdateRoleMenuParam(SchemaBase):
     menus: list[int]
 
 
+class UpdateRoleRuleParam(SchemaBase):
+    rules: list[int]
+
+
 class GetRoleListDetails(RoleSchemaBase):
     model_config = ConfigDict(from_attributes=True)
 
@@ -41,4 +46,4 @@ class GetRoleListDetails(RoleSchemaBase):
     created_time: datetime
     updated_time: datetime | None = None
     menus: list[GetMenuListDetails]
-    # TODO:暂时不引入数据规则部分
+    rules: list[GetDataRuleListDetails | None] = []

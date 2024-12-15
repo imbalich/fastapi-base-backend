@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+'''
+@Project : PyCharm
+@File    : config.py
+@IDE     : Pycharm
+@Author  : imbalich
+@Time    : 2024/12/15 22:19
+'''
+from sqlalchemy import Boolean, String
+from sqlalchemy.dialects.mysql import LONGTEXT
+from sqlalchemy.orm import Mapped, mapped_column
+
+from backend.common.model import Base, id_key
+
+
+class Config(Base):
+    """系统配置表"""
+
+    __tablename__ = 'sys_config'
+
+    id: Mapped[id_key] = mapped_column(init=False)
+    name: Mapped[str] = mapped_column(String(20), comment='名称')
+    type: Mapped[str | None] = mapped_column(String(20), server_default=None, comment='类型')
+    key: Mapped[str] = mapped_column(String(50), unique=True, comment='键名')
+    value: Mapped[str] = mapped_column(LONGTEXT, comment='键值')
+    is_frontend: Mapped[str] = mapped_column(Boolean, default=False, comment='是否前端')
+    remark: Mapped[str | None] = mapped_column(LONGTEXT, default=None, comment='备注')

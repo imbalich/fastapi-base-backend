@@ -7,17 +7,20 @@
 @Author  ：imbalich
 @Date    ：2024/12/10 17:21 
 '''
-import bcrypt
-
 from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import Select
 from sqlalchemy_crud_plus import CRUDPlus
 
-from backend.app.admin.model import User, Role
-from backend.app.admin.schema.user import RegisterUserParam, AddUserParam, UpdateUserParam, UpdateUserRoleParam, \
-    AvatarParam
+from backend.app.admin.model import Role, User
+from backend.app.admin.schema.user import (
+    AddUserParam,
+    AvatarParam,
+    RegisterUserParam,
+    UpdateUserParam,
+    UpdateUserRoleParam,
+)
 from backend.common.security.jwt import get_hash_password
 from backend.utils.timezone import timezone
 
@@ -130,7 +133,7 @@ class CRUDUser(CRUDPlus[User]):
                 selectinload(self.model.dept),
                 selectinload(self.model.roles).options(
                     selectinload(Role.menus),
-                    # TODO:暂时不添加数据规则
+                    selectinload(Role.rules),
                 ),
             )
             .order_by(desc(self.model.join_time))
@@ -207,8 +210,8 @@ class CRUDUser(CRUDPlus[User]):
         stmt = select(self.model).options(
             selectinload(self.model.dept),
             selectinload(self.model.roles).options(
-                selectinload(Role.menus)
-                # TODO:后期可能添加数据权限
+                selectinload(Role.menus),
+                selectinload(Role.rules),
             ),
         )
         filters = []

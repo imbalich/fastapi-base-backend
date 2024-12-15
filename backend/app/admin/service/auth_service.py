@@ -7,13 +7,13 @@
 @Author  ：imbalich
 @Date    ：2024/12/13 16:27 
 '''
-# 导入所需的模块和依赖
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from fastapi import Request, Response
 from fastapi.security import HTTPBasicCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.background import BackgroundTask, BackgroundTasks
 
-# 导入自定义模块和配置
 from backend.app.admin.conf import admin_settings
 from backend.app.admin.crud.crud_user import user_dao
 from backend.app.admin.model import User
@@ -41,13 +41,6 @@ from backend.utils.timezone import timezone
 class AuthService:
     @staticmethod
     async def user_verify(db: AsyncSession, username: str, password: str) -> User:
-        """
-        验证用户名和密码
-        :param db: 数据库会话
-        :param username: 用户名
-        :param password: 密码
-        :return: 验证通过的用户对象
-        """
         user = await user_dao.get_by_username(db, username)
         if not user:
             raise errors.NotFoundError(msg='用户名或密码有误')
@@ -58,11 +51,6 @@ class AuthService:
         return user
 
     async def swagger_login(self, *, obj: HTTPBasicCredentials) -> tuple[str, User]:
-        """
-        Swagger UI 登录
-        :param obj: 包含用户名和密码的凭证对象
-        :return: 访问令牌和用户对象
-        """
         async with async_db_session.begin() as db:
             user = await self.user_verify(db, obj.username, obj.password)
             user_id = user.id
@@ -139,12 +127,6 @@ class AuthService:
 
     @staticmethod
     async def new_token(*, request: Request, response: Response) -> GetNewToken:
-        """
-        刷新令牌
-        :param request: 请求对象
-        :param response: 响应对象
-        :return: 新的令牌
-        """
         refresh_token = request.cookies.get(settings.COOKIE_REFRESH_TOKEN_KEY)
         if not refresh_token:
             raise errors.TokenError(msg='Refresh Token 丢失，请重新登录')
@@ -154,26 +136,19 @@ class AuthService:
             raise errors.TokenError(msg='Refresh Token 无效')
         if request.user.id != user_id:
             raise errors.TokenError(msg='Refresh Token 无效')
-
         async with async_db_session() as db:
             user = await user_dao.get(db, user_id)
             if not user:
                 raise errors.NotFoundError(msg='用户名或密码有误')
             elif not user.status:
                 raise errors.AuthorizationError(msg='用户已被锁定, 请联系统管理员')
-
-            # 获取当前的访问令牌
             current_token = get_token(request)
-
-            # 创建新的访问令牌和刷新令牌
             new_token = await create_new_token(
                 sub=str(user.id),
                 token=current_token,
                 refresh_token=refresh_token,
                 multi_login=user.is_multi_login,
             )
-
-            # 设置新的刷新令牌 cookie
             response.set_cookie(
                 key=settings.COOKIE_REFRESH_TOKEN_KEY,
                 value=new_token.new_refresh_token,
@@ -181,8 +156,6 @@ class AuthService:
                 expires=timezone.f_utc(new_token.new_refresh_token_expire_time),
                 httponly=True,
             )
-
-            # 返回新的访问令牌
             data = GetNewToken(
                 access_token=new_token.new_access_token,
                 access_token_expire_time=new_token.new_access_token_expire_time,
@@ -191,31 +164,20 @@ class AuthService:
 
     @staticmethod
     async def logout(*, request: Request, response: Response) -> None:
-        """
-        用户登出
-        :param request: 请求对象
-        :param response: 响应对象
-        """
-        # 获取当前的访问令牌和刷新令牌
         token = get_token(request)
         refresh_token = request.cookies.get(settings.COOKIE_REFRESH_TOKEN_KEY)
-
-        # 删除刷新令牌 cookie
         response.delete_cookie(settings.COOKIE_REFRESH_TOKEN_KEY)
-
         if request.user.is_multi_login:
-            # 如果支持多设备登录，只删除当前设备的令牌
             key = f'{settings.TOKEN_REDIS_PREFIX}:{request.user.id}:{token}'
             await redis_client.delete(key)
             if refresh_token:
                 key = f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{request.user.id}:{refresh_token}'
                 await redis_client.delete(key)
         else:
-            # 如果不支持多设备登录，删除该用户的所有令牌
             key_prefix = f'{settings.TOKEN_REDIS_PREFIX}:{request.user.id}:'
             await redis_client.delete_prefix(key_prefix)
             key_prefix = f'{settings.TOKEN_REFRESH_REDIS_PREFIX}:{request.user.id}:'
             await redis_client.delete_prefix(key_prefix)
 
-# 创建 AuthService 的实例
+
 auth_service: AuthService = AuthService()

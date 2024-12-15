@@ -15,7 +15,7 @@ from typing_extensions import Self
 from backend.app.admin.schema.dept import GetDeptListDetails
 from backend.app.admin.schema.role import GetRoleListDetails
 from backend.common.enums import StatusType
-from backend.common.schema import SchemaBase, CustomPhoneNumber
+from backend.common.schema import CustomPhoneNumber, SchemaBase
 
 
 class AuthSchemaBase(SchemaBase):
@@ -28,9 +28,6 @@ class AuthLoginParam(AuthSchemaBase):
 
 
 class RegisterUserParam(AuthSchemaBase):
-    """
-    注册用户:需要填写邮箱地址,用户注册暂时不开放给用户，仅内部通过管理员给用户注册账号
-    """
     nickname: str | None = None
     email: EmailStr = Field(examples=['user@example.com'])
 
@@ -39,14 +36,14 @@ class AddUserParam(AuthSchemaBase):
     dept_id: int
     roles: list[int]
     nickname: str | None = None
-    email: EmailStr | None = Field(examples=['user@example.com'])
+    email: EmailStr = Field(examples=['user@example.com'])
 
 
 class UserInfoSchemaBase(SchemaBase):
     dept_id: int | None = None
     username: str
     nickname: str
-    email: EmailStr | None = Field(examples=['user@example.com'])
+    email: EmailStr = Field(examples=['user@example.com'])
     phone: CustomPhoneNumber | None = None
 
 
@@ -81,7 +78,6 @@ class GetUserInfoListDetails(GetUserInfoNoRelationDetail):
     model_config = ConfigDict(from_attributes=True)
 
     dept: GetDeptListDetails | None = None
-    # TODO:GetRoleListDetails尚未完善数据规则部分
     roles: list[GetRoleListDetails]
 
 
@@ -89,7 +85,6 @@ class GetCurrentUserInfoDetail(GetUserInfoListDetails):
     model_config = ConfigDict(from_attributes=True)
 
     dept: GetDeptListDetails | str | None = None
-    # TODO:GetRoleListDetails尚未完善数据规则部分
     roles: list[GetRoleListDetails] | list[str] | None = None
 
     @model_validator(mode='after')

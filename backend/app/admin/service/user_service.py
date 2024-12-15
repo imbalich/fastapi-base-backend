@@ -7,6 +7,8 @@
 @Author  ：imbalich
 @Date    ：2024/12/13 16:13 
 '''
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import random
 
 from fastapi import Request

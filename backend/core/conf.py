@@ -86,12 +86,11 @@ class Settings(BaseSettings):
     JWT_USER_REDIS_EXPIRE_SECONDS: int = 60 * 60 * 24 * 7
 
     # Permission (RBAC)
-    PERMISSION_MODE: Literal['casbin', 'role-menu'] = 'role-menu'
+    PERMISSION_MODE: Literal['casbin', 'role-menu'] = 'casbin'
     PERMISSION_REDIS_PREFIX: str = 'fbb:permission'
 
     # RBAC : 分两种, casbin 和 role-menu
     # Casbin
-    # TODO：后续完善casbin集成
     RBAC_CASBIN_EXCLUDE: set[tuple[str, str]] = {
         ('POST', f'{FASTAPI_API_V1_PATH}/auth/logout'),
         ('POST', f'{FASTAPI_API_V1_PATH}/auth/token/new'),
@@ -179,7 +178,6 @@ class Settings(BaseSettings):
     ]
 
     # Data permission
-    # TODO: 设置数据权限过滤，后续完善
     DATA_PERMISSION_MODELS: dict[
         str, str
     ] = {  # 允许进行数据过滤的 SQLA 模型，它必须以模块字符串的方式定义（它应该只用于前台数据，这里只是为了演示）

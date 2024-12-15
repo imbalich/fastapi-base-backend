@@ -14,6 +14,7 @@ from asgi_correlation_id import CorrelationIdMiddleware
 
 from fastapi import FastAPI, Depends
 from fastapi_limiter import FastAPILimiter
+from fastapi_pagination import add_pagination
 from starlette.middleware.authentication import AuthenticationMiddleware
 
 from backend.app.router import route
@@ -24,6 +25,7 @@ from backend.core.path_conf import STATIC_DIR
 from backend.database.db_mysql import create_table
 from backend.database.db_redis import redis_client
 from backend.middleware.jwt_auth_middleware import JwtAuthMiddleware
+from backend.middleware.opera_log_middleware import OperaLogMiddleware
 from backend.middleware.state_middleware import StateMiddleware
 from backend.utils.demo_site import demo_site
 from backend.utils.health_check import http_limit_callback, ensure_unique_route_names
@@ -70,8 +72,7 @@ def register_app():
         lifespan=register_init,
     )
 
-    # TODO:后续增加socketio服务
-    # register_socket_app(app)
+    register_socket_app(app)
 
     # 全局日志注册
     register_logger()
@@ -84,6 +85,9 @@ def register_app():
 
     # 路由
     register_router(app)
+
+    # 分页
+    register_page(app)
 
     # 全局异常处理
     register_exception(app)
@@ -103,7 +107,6 @@ def register_logger() -> None:
 def register_static_file(app: FastAPI):
     """
     静态文件交互开发模式, 生产将自动关闭，生产必须使用 nginx 静态资源服务
-
     :param app:
     :return:
     """
@@ -120,6 +123,9 @@ def register_middleware(app: FastAPI):
     :param app:
     :return:
     """
+    # Opera log (required)
+    app.add_middleware(OperaLogMiddleware)
+
     # JWT auth (required)
     app.add_middleware(
         AuthenticationMiddleware, backend=JwtAuthMiddleware(), on_error=JwtAuthMiddleware.auth_exception_handler
@@ -165,3 +171,30 @@ def register_router(app: FastAPI):
     # Extra
     ensure_unique_route_names(app)
     simplify_operation_ids(app)
+
+
+def register_page(app: FastAPI):
+    """
+    分页查询
+
+    :param app:
+    :return:
+    """
+    add_pagination(app)
+
+def register_socket_app(app: FastAPI):
+    """
+    socket 应用
+
+    :param app:
+    :return:
+    """
+    from backend.common.socketio.server import sio
+
+    socket_app = socketio.ASGIApp(
+        socketio_server=sio,
+        other_asgi_app=app,
+        # 切勿删除此配置：https://github.com/pyropy/fastapi-socketio/issues/51
+        socketio_path='/ws/socket.io',
+    )
+    app.mount('/ws', socket_app)

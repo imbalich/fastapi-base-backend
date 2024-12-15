@@ -42,9 +42,9 @@ class StrEnum(_EnumBase, str, Enum):
 class MenuType(IntEnum):
     """权限类型"""
     directory = 0  # 目录
-    menu = 1      # 菜单
-    button = 2    # 按钮
-    api = 9       # API接口:未来预留，暂未使用
+    menu = 1  # 菜单
+    button = 2  # 按钮
+    api = 9  # API接口:未来预留，暂未使用
 
 
 # 数据权限规则运算符枚举
@@ -113,6 +113,7 @@ class UserSocialType(StrEnum):
     """用户社交类型"""
     github = 'GitHub'
     linuxdo = 'LinuxDo'
+    # TODO: 添加其他社交平台微信、QQ、telegram等
 
 
 # MySQL列类型到Python类型的映射枚举

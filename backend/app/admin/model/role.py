@@ -11,7 +11,7 @@ from sqlalchemy import String
 from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.app.admin.model.m2m import sys_user_role, sys_role_menu
+from backend.app.admin.model.m2m import sys_user_role, sys_role_menu, sys_role_data_rule
 from backend.common.model import Base, id_key
 
 
@@ -36,4 +36,5 @@ class Role(Base):
     # 角色菜单多对多
     menus: Mapped[list['Menu']] = relationship(init=False, secondary=sys_role_menu, back_populates='roles')
 
-    # TODO:暂时不做数据权限的设计，先完成RBAC的功能，再做数据权限的设计
+    # 角色数据权限规则多对多
+    rules: Mapped[list['DataRule']] = relationship(init=False, secondary=sys_role_data_rule, back_populates='roles')
