@@ -10,6 +10,7 @@
 1. 24/12/8 #001： 更改mysql连接使用的异步操作引擎库为`aiomysql`,Windows环境下因为原`asyncmy`库存在某些问题，如需使用`asyncmy`请自行解决存在的问题。
 2. 2024/12/15 #002： 去除模板生成模块
 3. 2024/12/16 #003： 初步定版V1 FBB自改自用项目
+4. 2024/12/16 #003： 新增生成初始数据超级用户脚本，生成后请自行更改信息，注意信息安全
 
 # 项目构建
 ## 项目依赖
@@ -23,3 +24,4 @@
 2. `backend/core/conf.py`中的配置请按需更改
 3. 在`backend/scripts/init_data.py`初始化数据脚本，启动`backend/pre_start.sh`脚本初始化迁移和插入初始数据
 4. 启动`backend/pre_start.sh`脚本，启动flower，请修改用户名密码
+5. 在`backend/scripts/init_db.py`初始化数据脚本,生成超级用户，请自行更改数据注意数据安全
