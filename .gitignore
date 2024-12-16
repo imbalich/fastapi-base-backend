@@ -16,7 +16,6 @@ __pycache__/
 *.py[cod]
 
 # Log files
-*.log
 log/
 logs/
 
