@@ -17,7 +17,6 @@ __pycache__/
 
 # Log files
 log/
-logs/
 
 # Environment variables
 .env
@@ -48,3 +47,4 @@ wheels/
 
 backend/alembic/versions/
 
+!/backend/app/admin/api/v1/log/
