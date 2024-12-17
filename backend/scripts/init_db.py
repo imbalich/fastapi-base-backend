@@ -84,11 +84,10 @@ async def init_test_data():
 
                 # 4. 创建角色
                 test_role = Role(
-                    name="test",
-                    code="test",
-                    data_scope=2,
+                    name="开发组",
+                    data_scope=0,
                     status=1,
-                    remark=None
+                    remark="初始化脚本生成的开发组角色"
                 )
                 db.add(test_role)
                 await db.flush()
