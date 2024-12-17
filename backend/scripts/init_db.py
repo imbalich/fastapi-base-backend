@@ -35,7 +35,7 @@ async def init_test_data():
 
                 # 1. 创建部门
                 test_dept = Dept(
-                    name="test",
+                    name="开发组",
                     level=0,
                     sort=0,
                     leader=None,
