@@ -22,7 +22,6 @@ class Role(Base):
 
     id: Mapped[id_key] = mapped_column(init=False)
     name: Mapped[str] = mapped_column(String(20), unique=True, comment='角色名称')
-    # code: Mapped[str] = mapped_column(String(100), unique=True, comment='角色编码')
     data_scope: Mapped[int | None] = mapped_column(
         default=0,
         comment='数据权限范围（0: 全部数据，1: 自定义数据，2: 所在部门及以下数据，3: 所在部门数据，4: 仅本人数据）',

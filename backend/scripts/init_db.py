@@ -69,14 +69,12 @@ async def init_test_data():
                     Menu(title="菜单管理", name="SysMenu", level=0, sort=0, path="sys-menu", menu_type=1, component="/admin/menu/index.vue", status=1, show=1, cache=1, parent_id=4, remark=None),
                     Menu(title="API 管理", name="SysApi", level=0, sort=0, path="sys-api", menu_type=1, component="/admin/api/index.vue", status=1, show=1, cache=1, parent_id=4, remark=None),
                     Menu(title="数据规则管理", name="SysDataRule", level=0, sort=0, path="sys-data-rule", menu_type=1, component="/admin/data-rule/index.vue", status=1, show=1, cache=1, parent_id=4, remark=None),
-                    Menu(title="系统自动化", name="automation", level=0, sort=0, icon="IconCodeSquare", path="automation", menu_type=0, status=1, show=1, cache=1, remark=None),
-                    Menu(title="代码生成", name="CodeGenerator", level=0, sort=0, path="code-generator", menu_type=1, component="/automation/generator/index.vue", status=1, show=1, cache=1, parent_id=11, remark=None),
                     Menu(title="系统监控", name="monitor", level=0, sort=0, icon="IconComputer", path="monitor", menu_type=0, status=1, show=1, cache=1, remark=None),
-                    Menu(title="Redis 监控", name="Redis", level=0, sort=0, path="redis", menu_type=1, component="/monitor/redis/index.vue", perms="sys:monitor:redis", status=1, show=1, cache=1, parent_id=13, remark=None),
-                    Menu(title="服务器监控", name="Server", level=0, sort=0, path="server", menu_type=1, component="/monitor/server/index.vue", perms="sys:monitor:server", status=1, show=1, cache=1, parent_id=13, remark=None),
+                    Menu(title="Redis 监控", name="Redis", level=0, sort=0, path="redis", menu_type=1, component="/monitor/redis/index.vue", perms="sys:monitor:redis", status=1, show=1, cache=1, parent_id=11, remark=None),
+                    Menu(title="服务器监控", name="Server", level=0, sort=0, path="server", menu_type=1, component="/monitor/server/index.vue", perms="sys:monitor:server", status=1, show=1, cache=1, parent_id=11, remark=None),
                     Menu(title="日志", name="log", level=0, sort=0, icon="IconBug", path="log", menu_type=0, status=1, show=1, cache=1, remark=None),
-                    Menu(title="登录日志", name="Login", level=0, sort=0, path="login", menu_type=1, component="/log/login/index.vue", status=1, show=1, cache=1, parent_id=16, remark=None),
-                    Menu(title="操作日志", name="Opera", level=0, sort=0, path="opera", menu_type=1, component="/log/opera/index.vue", status=1, show=1, cache=1, parent_id=16, remark=None)
+                    Menu(title="登录日志", name="Login", level=0, sort=0, path="login", menu_type=1, component="/log/login/index.vue", status=1, show=1, cache=1, parent_id=14, remark=None),
+                    Menu(title="操作日志", name="Opera", level=0, sort=0, path="opera", menu_type=1, component="/log/opera/index.vue", status=1, show=1, cache=1, parent_id=14, remark=None)
                 ]
                 for menu in menus:
                     db.add(menu)
