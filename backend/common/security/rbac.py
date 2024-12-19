@@ -118,7 +118,7 @@ class RBAC:
             user_uuid = request.user.uuid
             enforcer = await self.enforcer()
             if not enforcer.enforce(user_uuid, path, method):
-                raise AuthorizationError
+                raise AuthorizationError(msg='用户权限不足，请联系系统管理员')
 
 
 rbac: RBAC = RBAC()
