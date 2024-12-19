@@ -7,8 +7,6 @@
 @Author  ：imbalich
 @Date    ：2024/12/13 16:27 
 '''
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 from fastapi import Request, Response
 from fastapi.security import HTTPBasicCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
