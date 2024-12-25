@@ -19,6 +19,10 @@
 
 继续开发之前安装依赖`pip install -r requirements.txt`
 
+运行前请先完成数据库生成和迁移：
+数据库生成命令`alembic revision --autogenerate -m "xxxx"`
+数据库迁移命令`alembic upgrade head`
+
 # 注意事项
 ## 环境配置
 1. 请复制环境变量文件，并将其中关键字段更改，尤其是token部分请重新生成并保密

@@ -18,7 +18,8 @@ from backend.core import path_conf
 from backend.database.db_mysql import SQLALCHEMY_DATABASE_URL
 
 # import your new model here
-from backend.app.admin.model import * # noqa: 003
+from backend.app.admin.model import *  # 系统管理模块
+from backend.app.datamanage.model import *  # 数据管理模块
 
 if not os.path.exists(path_conf.ALEMBIC_VERSION_DIR):
     os.makedirs(path_conf.ALEMBIC_VERSION_DIR)
