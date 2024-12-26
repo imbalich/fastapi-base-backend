@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 '''
 @Project : PyCharm
-@File    : db_redis.py
+@File    : redis.py
 @IDE     : Pycharm
 @Author  : imbalich
 @Time    : 2024/12/8 1:58

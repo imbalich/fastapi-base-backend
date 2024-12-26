@@ -9,7 +9,8 @@
 '''
 from typing import Union
 
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import Boolean, ForeignKey, String
+from sqlalchemy.dialects.postgresql import INTEGER
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.common.model import Base, id_key
@@ -27,7 +28,9 @@ class Dept(Base):
     level: Mapped[int] = mapped_column(default=0, comment='部门层级')
     sort: Mapped[int] = mapped_column(default=0, comment='排序')
     status: Mapped[int] = mapped_column(default=1, comment='部门状态（0停用 1正常）')
-    del_flag: Mapped[bool] = mapped_column(default=False, comment='删除标志（0删除 1存在）')
+    del_flag: Mapped[bool] = mapped_column(
+        Boolean().with_variant(INTEGER, 'postgresql'), default=False, comment='删除标志（0删除 1存在）'
+    )
 
     # 父级部门一对多
     parent_id: Mapped[int | None] = mapped_column(
