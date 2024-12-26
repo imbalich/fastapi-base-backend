@@ -24,8 +24,8 @@ from backend.app.admin.schema.role import (
 )
 from backend.common.exception import errors
 from backend.core.conf import settings
-from backend.database.db_mysql import async_db_session
-from backend.database.db_redis import redis_client
+from backend.database.db import async_db_session
+from backend.database.redis import redis_client
 
 
 class RoleService:
@@ -50,8 +50,8 @@ class RoleService:
             return roles
 
     @staticmethod
-    async def get_select(*, name: str = None, data_scope: int = None, status: int = None) -> Select:
-        return await role_dao.get_list(name=name, data_scope=data_scope, status=status)
+    async def get_select(*, name: str = None, status: int = None) -> Select:
+        return await role_dao.get_list(name=name, status=status)
 
     @staticmethod
     async def create(*, obj: CreateRoleParam) -> None:

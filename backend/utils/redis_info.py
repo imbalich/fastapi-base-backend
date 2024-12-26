@@ -7,7 +7,7 @@
 @Author  : imbalich
 @Time    : 2024/12/15 21:37
 '''
-from backend.database.db_redis import redis_client
+from backend.database.redis import redis_client
 from backend.utils.server_info import server_info
 
 

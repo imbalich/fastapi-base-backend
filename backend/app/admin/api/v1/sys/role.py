@@ -26,7 +26,7 @@ from backend.common.response.response_schema import ResponseModel, response_base
 from backend.common.security.jwt import DependsJwtAuth
 from backend.common.security.permission import RequestPermission
 from backend.common.security.rbac import DependsRBAC
-from backend.database.db_mysql import CurrentSession
+from backend.database.db import CurrentSession
 from backend.utils.serializers import select_as_dict, select_list_serialize
 
 router = APIRouter()
@@ -76,10 +76,9 @@ async def get_role(pk: Annotated[int, Path(...)]) -> ResponseModel:
 async def get_pagination_roles(
     db: CurrentSession,
     name: Annotated[str | None, Query()] = None,
-    data_scope: Annotated[int | None, Query()] = None,
     status: Annotated[int | None, Query()] = None,
 ) -> ResponseModel:
-    role_select = await role_service.get_select(name=name, data_scope=data_scope, status=status)
+    role_select = await role_service.get_select(name=name, status=status)
     page_data = await paging_data(db, role_select, GetRoleListDetails)
     return response_base.success(data=page_data)
 

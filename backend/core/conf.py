@@ -8,7 +8,7 @@
 @Date    ：2024/12/7 16:22 
 '''
 from functools import lru_cache
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,11 +23,14 @@ class Settings(BaseSettings):
     # Env Config
     ENVIRONMENT: Literal['dev', 'pro']
 
-    # Env MySQL
-    MYSQL_HOST: str
-    MYSQL_PORT: int
-    MYSQL_USER: str
-    MYSQL_PASSWORD: str
+    # Env Database Type
+    DATABASE_TYPE: Literal['mysql', 'postgresql']
+
+    # Env Database
+    DATABASE_HOST: str
+    DATABASE_PORT: int
+    DATABASE_USER: str
+    DATABASE_PASSWORD: str
 
     # Env Redis
     REDIS_HOST: str
@@ -64,9 +67,9 @@ class Settings(BaseSettings):
         return values
 
     # MySQL
-    MYSQL_ECHO: bool = False  # 是否打印 SQL 语句
-    MYSQL_DATABASE: str = 'fbb'  # 数据库
-    MYSQL_CHARSET: str = 'utf8mb4'  # 字符集
+    DATABASE_ECHO: bool = False  # 是否打印 SQL 语句
+    DATABASE_SCHEMA: str = 'fbb'  # 数据库
+    DATABASE_CHARSET: str = 'utf8mb4'  # 字符集
 
     # Redis
     REDIS_TIMEOUT: int = 5  # 超时时间
@@ -189,6 +192,14 @@ class Settings(BaseSettings):
         'created_time',
         'updated_time',
     ]
+
+    @model_validator(mode='before')
+    @classmethod
+    def check_env(cls, values: Any) -> Any:
+        if values['ENVIRONMENT'] == 'pro':
+            values['OPENAPI_URL'] = None
+            values['FASTAPI_STATIC_FILES'] = False
+        return values
 
 
 @lru_cache
