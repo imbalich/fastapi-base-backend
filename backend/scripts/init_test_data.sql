@@ -26,7 +26,7 @@ VALUES (1, '测试', 'test', 0, 0, '', NULL, 0, NULL, NULL, 0, 0, 1, NULL, NULL,
        (17, '登录日志', 'Login', 0, 0, NULL, 'login', 1, '/log/login/index.vue', NULL, 1, 1, 1, NULL, 16, '2023-07-27 19:20:56', NULL),
        (18, '操作日志', 'Opera', 0, 0, NULL, 'opera', 1, '/log/opera/index.vue', NULL, 1, 1, 1, NULL, 16, '2023-07-27 19:21:28', NULL);
 
-INSERT INTO `fbb`.`sys_role` (`id`, `name`, `data_scope`, `status`, `remark`, `created_time`, `updated_time`) VALUES (1, 'test', 2, 1, NULL, '2023-06-26 17:13:45', NULL);
+INSERT INTO `fbb`.`sys_role` (`id`, `name`, `status`, `remark`, `created_time`, `updated_time`) VALUES (1, 'test', 2, 1, NULL, '2023-06-26 17:13:45', NULL);
 
 INSERT INTO `fbb`.`sys_role_menu` (`id`, `role_id`, `menu_id`) VALUES (1, 1, 1);
 
