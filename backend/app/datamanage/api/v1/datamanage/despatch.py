@@ -11,7 +11,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from backend.database.db_mysql import CurrentSession
+from backend.database.db import CurrentSession
 
 router = APIRouter()
 

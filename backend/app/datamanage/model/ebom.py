@@ -14,7 +14,6 @@ from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
 from backend.common.model import Base, id_key
-from backend.database.db_mysql import uuid4_str
 from backend.utils.timezone import timezone
 
 
