@@ -11,18 +11,21 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
+from backend.app.datamanage.service.despatch_service import despatch_service
+from backend.common.response.response_schema import response_base, ResponseModel
 from backend.database.db import CurrentSession
 
 router = APIRouter()
 
+"""
+接口需求:
+1.获取发运数据中所有型号的接口：用于支持前端的下拉框选择
+2.获取发运数据中所有修理级别的接口：用于支持前端的下拉框选择
+3.（模糊条件）分页获取所有发运数据
+"""
 
-@router.post('', summary='（模糊条件）分页获取所有发运数据')
-async def get_pagination_despatch(
-        db: CurrentSession,
-        model: Annotated[int | None, Query()] = None,  # 产品型号
-        identifier: Annotated[str | None, Query()] = None,  # 产品编码
-        repair_level: Annotated[str | None, Query()] = None,  # 修理级别
-        repair_level_num: Annotated[int | None, Query()] = None,  # 修级序号
-        life_cycle_time: Annotated[list[str] | None, Query(None, description="出厂日期范围，格式：[YYYY-MM-DD, YYYY-MM-DD]")] = None
-):
-    pass
+
+@router.get('/models', summary='获取发运数据中所有型号')
+async def get_despatch_models() -> ResponseModel:
+    models = await despatch_service.get_models()
+    return response_base.success(data=models)

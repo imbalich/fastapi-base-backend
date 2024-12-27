@@ -12,10 +12,10 @@ from datetime import date
 from sqlalchemy import String, Date
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.common.model import Base, id_key
+from backend.common.model import DataClassBase, id_key
 
 
-class Despatch(Base):
+class Despatch(DataClassBase):
     """发运表表:只查不增改删"""
 
     __tablename__ = 'dm_despatch'
