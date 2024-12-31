@@ -29,3 +29,9 @@ router = APIRouter()
 async def get_despatch_models() -> ResponseModel:
     models = await despatch_service.get_models()
     return response_base.success(data=models)
+
+
+@router.get('/repair-levels', summary='获取发运数据中所有修理级别')
+async def get_despatch_repair_levels() -> ResponseModel:
+    repair_levels = await despatch_service.get_repair_levels()
+    return response_base.success(data=repair_levels)

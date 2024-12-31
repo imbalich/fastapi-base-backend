@@ -7,7 +7,7 @@
 @Author  ：imbalich
 @Date    ：2024/12/26 16:51 
 '''
-from typing import Sequence
+from typing import Sequence, Any
 
 from sqlalchemy import Select, select, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,14 +18,25 @@ from backend.app.datamanage.model import Despatch
 
 class CRUDDespatch(CRUDPlus[Despatch]):
 
-    async def get_models(self, db: AsyncSession) -> Sequence[Despatch.model] | None:
+    async def get_distinct_column_values(self, db: AsyncSession, column_name: str) -> Sequence[Any]:
         """
-        获取所有的model
+        获取指定列的所有唯一值
+        :param db: 数据库会话
+        :param column_name: 列名
+        :return: 唯一值列表
         """
-        stmt = select(distinct(self.model.model)).order_by(self.model.model)
+        # 确保列名存在于模型中
+        if not hasattr(self.model, column_name):
+            raise ValueError(f"Column {column_name} does not exist in model {self.model.__name__}")
+
+        # 构建查询
+        column = getattr(self.model, column_name)
+        stmt = select(distinct(column)).order_by(column)
+        # 执行查询
         result = await db.execute(stmt)
-        models = result.scalars().all()
-        return models
+
+        # 返回结果
+        return result.scalars().all()
 
 
 despatch_dao: CRUDDespatch = CRUDDespatch(Despatch)
