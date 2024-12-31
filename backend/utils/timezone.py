@@ -9,7 +9,7 @@
 '''
 import zoneinfo
 
-from datetime import datetime
+from datetime import datetime, date
 from datetime import timezone as datetime_timezone
 
 from backend.core.conf import settings
@@ -26,6 +26,14 @@ class TimeZone:
         :return:
         """
         return datetime.now(self.tz_info)
+
+    def now_date(self) -> date:
+        """
+        获取时区日期
+
+        :return:
+        """
+        return datetime.now(self.tz_info).date()
 
     def f_datetime(self, dt: datetime) -> datetime:
         """
