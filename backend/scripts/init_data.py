@@ -12,9 +12,9 @@ import sys
 
 from anyio import run
 
-sys.path.append('../')
+from backend.database.db import create_table
 
-from backend.database.db_mysql import create_table
+sys.path.append('../')
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

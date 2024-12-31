@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.admin.model import User, Role, Dept, Menu, Api
 from backend.common.security.jwt import get_hash_password
-from backend.database.db_mysql import async_db_session
+from backend.database.db import async_db_session
 
 
 async def init_test_data():
@@ -83,7 +83,6 @@ async def init_test_data():
                 # 4. 创建角色
                 test_role = Role(
                     name="开发组",
-                    data_scope=0,
                     status=1,
                     remark="初始化脚本生成的开发组角色"
                 )

@@ -19,10 +19,14 @@
 
 继续开发之前安装依赖`pip install -r requirements.txt`
 
+运行前请先完成数据库生成和迁移：
+数据库生成命令`alembic revision --autogenerate -m "xxxx"`
+数据库迁移命令`alembic upgrade head`
+
 # 注意事项
 ## 环境配置
 1. 请复制环境变量文件，并将其中关键字段更改，尤其是token部分请重新生成并保密
 2. `backend/core/conf.py`中的配置请按需更改
 3. 在`backend/scripts/init_data.py`初始化数据脚本，启动`backend/pre_start.sh`脚本初始化迁移和插入初始数据
 4. 启动`backend/pre_start.sh`脚本，启动flower，请修改用户名密码
-5. 在`backend/scripts/init_db.py`初始化数据脚本,sql文件请自行导入数据库，初始化后请自行更改数据注意数据安全
+5. 请勿使用此条:在`backend/scripts/init_db.py`初始化数据脚本,sql文件请自行导入数据库，初始化后请自行更改数据注意数据安全

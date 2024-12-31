@@ -49,7 +49,7 @@ class OperaLogMiddleware(BaseHTTPMiddleware):
         start_time = timezone.now()
         request_next = await self.execute_request(request, call_next)
         end_time = timezone.now()
-        cost_time = (end_time - start_time).total_seconds() * 1000.0
+        cost_time = round((end_time - start_time).total_seconds() * 1000.0, 3)
 
         # 此信息只能在请求后获取
         _route = request.scope.get('route')
@@ -140,14 +140,14 @@ class OperaLogMiddleware(BaseHTTPMiddleware):
             args.update({k: v.filename if isinstance(v, UploadFile) else v for k, v in form_data.items()})
         else:
             if body_data:
-                json_data = await request.json()
-                if not isinstance(json_data, dict):
-                    json_data = {
-                        f'{type(json_data)}_to_dict_data': json_data.decode('utf-8')
-                        if isinstance(json_data, bytes)
-                        else json_data
-                    }
-                args.update(json_data)
+                content_type = request.headers.get('Content-Type', '').split(';')[0].strip().lower()
+                if content_type == 'application/json':
+                    json_data = await request.json()
+                    if isinstance(json_data, bytes):
+                        json_data = json_data.decode('utf-8')
+                    args.update(json_data)
+                else:
+                    args.update({'body': str(body_data)})
         return args
 
     @staticmethod
