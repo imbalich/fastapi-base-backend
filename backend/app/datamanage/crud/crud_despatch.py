@@ -9,7 +9,7 @@
 '''
 from typing import Sequence, Any
 
-from sqlalchemy import Select, select, distinct
+from sqlalchemy import Select, select, distinct, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_crud_plus import CRUDPlus
 
@@ -37,6 +37,22 @@ class CRUDDespatch(CRUDPlus[Despatch]):
 
         # 返回结果
         return result.scalars().all()
+
+    async def get_list(self, model: str = None, identifier: str = None, repair_level: str = None,
+                       time_range: list[str] = None) -> Select:
+        stmt = select(self.model).order_by(desc(self.model.model))
+        where_list = []
+        if model:
+            where_list.append(self.model.model == model)
+        if identifier is not None:
+            where_list.append(self.model.identifier == identifier)
+        if repair_level is not None:
+            where_list.append(self.model.repair_level == repair_level)
+        if time_range:
+            where_list.append(self.model.life_cycle_time.between(time_range[0], time_range[1]))
+        if where_list:
+            stmt = stmt.where(*where_list)
+        return stmt
 
 
 despatch_dao: CRUDDespatch = CRUDDespatch(Despatch)

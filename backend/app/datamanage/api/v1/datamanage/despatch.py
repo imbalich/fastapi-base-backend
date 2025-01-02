@@ -11,7 +11,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
+from backend.app.datamanage.schema.despatch import GetDespatchDetails
 from backend.app.datamanage.service.despatch_service import despatch_service
+from backend.common.pagination import paging_data, DependsPagination
 from backend.common.response.response_schema import response_base, ResponseModel
 from backend.database.db import CurrentSession
 
@@ -35,3 +37,17 @@ async def get_despatch_models() -> ResponseModel:
 async def get_despatch_repair_levels() -> ResponseModel:
     repair_levels = await despatch_service.get_repair_levels()
     return response_base.success(data=repair_levels)
+
+
+@router.get('', summary='（模糊条件）分页获取所有发运数据',dependencies=[DependsPagination])
+async def get_pagination_despatch(
+        db: CurrentSession,
+        model: Annotated[str | None, Query()] = None,
+        identifier: Annotated[str | None, Query()] = None,
+        repair_level: Annotated[str | None, Query()] = None,
+        time_range: Annotated[list[str] | None, Query()] = None,
+) -> ResponseModel:
+    despatch_select = await despatch_service.get_select(model=model, identifier=identifier, repair_level=repair_level,
+                                                        time_range=time_range)
+    page_data = await paging_data(db, despatch_select, GetDespatchDetails)
+    return response_base.success(data=page_data)

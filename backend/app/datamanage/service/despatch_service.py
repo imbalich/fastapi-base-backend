@@ -10,6 +10,7 @@
 from typing import Sequence
 
 from fastapi import Request
+from sqlalchemy import Select
 
 from backend.app.datamanage.crud.crud_despatch import despatch_dao
 from backend.app.datamanage.model import Despatch
@@ -34,6 +35,13 @@ class DespatchService:
             if not repair_levels:
                 raise errors.NotFoundError(msg='发运数据中未找到修理级别')
             return repair_levels
-        pass
+
+    @staticmethod
+    async def get_select(*, model: str = None, identifier: str = None, repair_level: str = None,
+                         time_range: list[str] = None) -> Select:
+        # 时间范围
+        return await despatch_dao.get_list(model=model, identifier=identifier, repair_level=repair_level,
+                                           time_range=time_range)
+
 
 despatch_service: DespatchService = DespatchService()
